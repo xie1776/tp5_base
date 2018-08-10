@@ -166,3 +166,19 @@ function config_data($data = array())
 	}
 	return $return;
 }
+
+if (!function_exists('pre')) {
+	/**
+	 * 调试方法
+	 * @Author zhibin
+	 * @Date   2018-08-10
+	 * @param  [type]     $data [description]
+	 * @return [type]           [description]
+	 */
+	function pre($data)
+	{
+		echo '<pre>';
+		var_dump($data);
+		echo '</pre>';
+	}
+}

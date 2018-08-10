@@ -143,7 +143,7 @@ class PostsController extends AdminAuth
             return  $validate->getError();
         }
 
-        $data['feature_image'] = $this->upload();
+        $data['feature_image'] = $this->myupload();
         if(!$data['feature_image']){
             unset($data['feature_image']);
         }
@@ -173,7 +173,7 @@ class PostsController extends AdminAuth
         $this->data['edit_fields'] = array(
             'post_title'     => array('type' => 'text', 'label' => '标题'),
             'post_excerpt'   => array('type' => 'textarea', 'label' => '摘要'),
-            'post_content'   => array('type' => 'textarea', 'label' => '内容'),
+            'post_content'   => array('type' => 'textarea', 'label' => '内容','id'=>'ckeditor_post_content'),
             'feature_image'  => array('type' => 'file','label'     => '特色图片'),
             'status'         => array('type' => 'radio', 'label' => '状态','default'=> array(-1 => '删除', 0 => '草稿', 1 => '发布',2 => '待审核')),
             'hr1'            => array('type' => 'hr'),
@@ -245,6 +245,7 @@ class PostsController extends AdminAuth
     public function upload(){
 	    // 获取表单上传文件
 	    $file = request()->file('feature_image');
+        // echo '<pre>';var_dump($file);die;
 	    if($file){
 	        if (true !== $this->validate(['feature_image' => $file], ['feature_image' => 'image'])) {
 	            $this->error('请选择图像文件');
@@ -343,7 +344,31 @@ class PostsController extends AdminAuth
         }else{
         	return $posts->getError();
         }
-
-
     }
+
+
+    /**
+     * 上传图片简单
+     * @Author zhibin
+     * @Date   2018-08-10
+     * @return [type]     [description]
+     */
+    public function myupload()
+    {
+        $file = request()->file('feature_image');
+        
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if($file){
+            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if($info){
+                // 成功上传后 获取上传信息
+                return $info->getSaveName();
+            }else{
+                // 上传失败获取错误信息
+                throw new Exception($file->getError());
+            }
+        }
+    }
+
+
 }
