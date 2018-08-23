@@ -23,46 +23,30 @@
 	<div class="row clearfix">
 		<div class="col-md-12 column">
 			<div id="header">
-				<div class="topAD">
-					专业、专注、专心
-				</div>
-				<div class="logo">
-					洋洋网络标准网站
-				</div>
-			</div>
-			
-			
-			<div id="top">
+				<div class="topAD">专业、专注、专心</div>
+				<div class="logo">洋洋网络标准网站</div>
+			</div>	
+			<!-- <div id="top">
 				<div id="topBar">
 					<div class="userPanel">
 						<ul>
-							<li>
-								<a href="#">手机版</a>
-							</li>
-							<li>
-								<a href="#">设为首页</a>
-							</li>
-							<li>
-								<a href="#">加入收藏</a>
-							</li>
-							<li>
-								<a href="#">联系我们</a>
-							</li>
+							<li><a href="#">手机版</a></li>
+							<li><a href="#">设为首页</a></li>
+							<li><a href="#">加入收藏</a></li>
+							<li><a href="#">联系我们</a></li>
 						</ul>
 					</div>
 					<div class="welcome">
 						欢迎光临洋洋网络工作室网站！
 					</div>
 				</div>
-				
-			</div>
-			
+			</div> -->
 			<nav class="navbar navbar-default" role="navigation">
 				<div class="navbar-header">
 					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="#">导航</a>
 				</div>
 				
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" >
 					<ul class="nav navbar-nav">
 						<li class="active">
 							<a href="#">链接</a>
@@ -135,7 +119,7 @@
 		</div>
 	</div>
 	<div class="row clearfix">
-		<div class="col-md-9 column">
+		<div class="col-md-8 column">
 			<div class="carousel slide" id="carousel-953186">
 				<ol class="carousel-indicators">
 					<li class="active" data-slide-to="0" data-target="#carousel-953186">
@@ -185,12 +169,16 @@
 			<div class="jumbotron" style="margin-top: 20px;">
 				<h2>{$joke['title']}</h2>
 				<p>
-					{$joke['content']}
+					{if !empty($joke['content'])}
+						{$joke['content']}
+					{else/}
+					<img src="{$joke['img']}" alt="">
+					{/if}
 				</p>
-				<p><a class="btn btn-primary btn-large" href="#">查看更多 »</a></p>
+				<!-- <p><a class="btn btn-primary btn-large" href="#">查看更多 »</a></p> -->
 			</div>
 			{/foreach}
-			<ul class="pagination">
+			<!-- <ul class="pagination">
 				<li><a href="#">上一页</a></li>
 				<li><a href="#">1</a></li>
 				<li><a href="#">2</a></li>
@@ -198,9 +186,10 @@
 				<li><a href="#">4</a></li>
 				<li><a href="#">5</a></li>
 				<li><a href="#">下一页</a></li>
-			</ul>
+			</ul> -->
+			{$page}
 		</div>
-		<div class="col-md-3 column">
+		<div class="col-md-4 column">
 			<img alt="140x140" src="/static/home/skin/img/140.jpg" />
 		</div>
 	</div>
