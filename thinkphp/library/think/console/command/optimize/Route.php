@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006-2015 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -27,6 +27,11 @@ class Route extends Command
 
     protected function execute(Input $input, Output $output)
     {
+
+        if (!is_dir(RUNTIME_PATH)) {
+            @mkdir(RUNTIME_PATH, 0755, true);
+        }
+
         file_put_contents(RUNTIME_PATH . 'route.php', $this->buildRouteCache());
         $output->writeln('<info>Succeed!</info>');
     }

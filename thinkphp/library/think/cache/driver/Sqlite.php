@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2016 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -11,15 +11,14 @@
 
 namespace think\cache\driver;
 
-use think\Exception;
+use think\cache\Driver;
 
 /**
  * Sqlite缓存驱动
  * @author    liu21st <liu21st@gmail.com>
  */
-class Sqlite
+class Sqlite extends Driver
 {
-
     protected $options = [
         'db'         => ':memory:',
         'table'      => 'sharedmemory',
@@ -29,7 +28,7 @@ class Sqlite
     ];
 
     /**
-     * 架构函数
+     * 构造函数
      * @param array $options 缓存参数
      * @throws \BadFunctionCallException
      * @access public
@@ -47,6 +46,17 @@ class Sqlite
     }
 
     /**
+     * 获取实际的缓存标识
+     * @access public
+     * @param string $name 缓存名
+     * @return string
+     */
+    protected function getCacheKey($name)
+    {
+        return $this->options['prefix'] . sqlite_escape_string($name);
+    }
+
+    /**
      * 判断缓存
      * @access public
      * @param string $name 缓存变量名
@@ -54,7 +64,7 @@ class Sqlite
      */
     public function has($name)
     {
-        $name   = $this->options['prefix'] . sqlite_escape_string($name);
+        $name   = $this->getCacheKey($name);
         $sql    = 'SELECT value FROM ' . $this->options['table'] . ' WHERE var=\'' . $name . '\' AND (expire=0 OR expire >' . $_SERVER['REQUEST_TIME'] . ') LIMIT 1';
         $result = sqlite_query($this->handler, $sql);
         return sqlite_num_rows($result);
@@ -69,7 +79,7 @@ class Sqlite
      */
     public function get($name, $default = false)
     {
-        $name   = $this->options['prefix'] . sqlite_escape_string($name);
+        $name   = $this->getCacheKey($name);
         $sql    = 'SELECT value FROM ' . $this->options['table'] . ' WHERE var=\'' . $name . '\' AND (expire=0 OR expire >' . $_SERVER['REQUEST_TIME'] . ') LIMIT 1';
         $result = sqlite_query($this->handler, $sql);
         if (sqlite_num_rows($result)) {
@@ -86,24 +96,34 @@ class Sqlite
     /**
      * 写入缓存
      * @access public
-     * @param string    $name 缓存变量名
-     * @param mixed     $value  存储数据
-     * @param integer   $expire  有效时间（秒）
+     * @param string            $name 缓存变量名
+     * @param mixed             $value  存储数据
+     * @param integer|\DateTime $expire  有效时间（秒）
      * @return boolean
      */
     public function set($name, $value, $expire = null)
     {
-        $name  = $this->options['prefix'] . sqlite_escape_string($name);
+        $name  = $this->getCacheKey($name);
         $value = sqlite_escape_string(serialize($value));
         if (is_null($expire)) {
             $expire = $this->options['expire'];
         }
-        $expire = (0 == $expire) ? 0 : ($_SERVER['REQUEST_TIME'] + $expire); //缓存有效期为0表示永久缓存
+        if ($expire instanceof \DateTime) {
+            $expire = $expire->getTimestamp();
+        } else {
+            $expire = (0 == $expire) ? 0 : (time() + $expire); //缓存有效期为0表示永久缓存
+        }
         if (function_exists('gzcompress')) {
             //数据压缩
             $value = gzcompress($value, 3);
         }
-        $sql = 'REPLACE INTO ' . $this->options['table'] . ' (var, value,expire) VALUES (\'' . $name . '\', \'' . $value . '\', \'' . $expire . '\')';
+        if ($this->tag) {
+            $tag       = $this->tag;
+            $this->tag = null;
+        } else {
+            $tag = '';
+        }
+        $sql = 'REPLACE INTO ' . $this->options['table'] . ' (var, value, expire, tag) VALUES (\'' . $name . '\', \'' . $value . '\', \'' . $expire . '\', \'' . $tag . '\')';
         if (sqlite_query($this->handler, $sql)) {
             return true;
         }
@@ -139,7 +159,7 @@ class Sqlite
         if ($this->has($name)) {
             $value = $this->get($name) - $step;
         } else {
-            $value = $step;
+            $value = -$step;
         }
         return $this->set($name, $value, 0) ? $value : false;
     }
@@ -152,7 +172,7 @@ class Sqlite
      */
     public function rm($name)
     {
-        $name = $this->options['prefix'] . sqlite_escape_string($name);
+        $name = $this->getCacheKey($name);
         $sql  = 'DELETE FROM ' . $this->options['table'] . ' WHERE var=\'' . $name . '\'';
         sqlite_query($this->handler, $sql);
         return true;
@@ -161,12 +181,19 @@ class Sqlite
     /**
      * 清除缓存
      * @access public
+     * @param string $tag 标签名
      * @return boolean
      */
-    public function clear()
+    public function clear($tag = null)
     {
+        if ($tag) {
+            $name = sqlite_escape_string($tag);
+            $sql  = 'DELETE FROM ' . $this->options['table'] . ' WHERE tag=\'' . $name . '\'';
+            sqlite_query($this->handler, $sql);
+            return true;
+        }
         $sql = 'DELETE FROM ' . $this->options['table'];
         sqlite_query($this->handler, $sql);
-        return;
+        return true;
     }
 }
