@@ -6,7 +6,7 @@
  * @如果需要公共控制器，就不要继承AdminAuth，直接继承Controller
  */
 namespace app\admin\controller;
-use app\admin\model\Administrator as AdministratorModel;
+use app\admin\model\AdministratorModel;
 use think\Controller;
 use think\Model;
 
