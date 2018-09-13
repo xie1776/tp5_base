@@ -16,7 +16,9 @@ class Index extends Base
     	$JokeModel = new JokeModel();
     	$list = $JokeModel->getList();
 
+        // pre($list);die;
     	$this->assign('list', $list['data']);
+        $this->assign('page', $list['page']);
     	return $this->fetch('joke');
     }
 }
