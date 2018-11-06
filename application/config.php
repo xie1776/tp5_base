@@ -49,7 +49,7 @@ return [
     // 默认语言
     'default_lang'           => 'zh-cn',
     // 是否启用控制器类后缀
-    'controller_suffix'      => true,
+    'controller_suffix'      => false,
 
     // +----------------------------------------------------------------------
     // | 模块设置
