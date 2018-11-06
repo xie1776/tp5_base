@@ -4,7 +4,7 @@ namespace app\admin\model;
 use think\Model;
 use think\Db;
 
-class User extends Model
+class UserModel extends Model
 {
 	/**
 	 * 添加新的用户

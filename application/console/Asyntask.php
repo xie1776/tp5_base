@@ -4,7 +4,7 @@ namespace app\console;
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
-use app\admin\model\User;
+use app\admin\model\UserModel;
 
 /**
  * 异步任务
@@ -37,13 +37,13 @@ class Asyntask extends Command
             $arr = json_decode($data, true);
             switch ($arr['task_name']) {
                 case 'useradd': //异步写入用户数据
-                    $User = new User();
-                    $User->insertUser($arr['data']);
+                    $UserModel = new UserModel();
+                    $UserModel->insertUser($arr['data']);
                     break;
                 case 'export':
                 default:
-                    $User = new User();
-                    $User->exportlist();
+                    $UserModel = new UserModel();
+                    $UserModel->exportlist();
                     break;
             }
             $serv->finish($data);
