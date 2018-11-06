@@ -182,3 +182,41 @@ if (!function_exists('pre')) {
 		echo '</pre>';
 	}
 }
+
+if (!function_exists('export')) {
+	/**
+	 * 导出数组
+	 * @Author zhibin
+	 * @Date   2018-11-05
+	 * @param  [type]     $filename [description]
+	 * @param  [type]     $header   [description]
+	 * @param  [type]     $data     [description]
+	 * @return [type]               [description]
+	 */
+	function export($filename,$header,$data)
+	{
+		$name = $filename.'.xls';
+		// header("Content-type:aplication/vnd.ms-excel;charset=utf-8");
+		// header("Content-Disposition:filename=$name");
+		$htmlStr = '<table border="1"><tr>';
+		foreach ($header as $k => $v) {
+			$htmlStr .= "<th align=center>{$v}</th>";
+		}
+		$htmlStr .= '</tr>';
+		foreach ($data as $k => $v) {
+			$htmlStr .= "<tr>";
+			foreach ($v as $kk => $vv) {
+				if ($kk == 'order_sn') {
+					$htmlStr .= "<td style='vnd.ms-excel.numberformat:@'>{$vv}</td>";
+				} elseif ($kk == 'sn') {
+					$htmlStr .= "<td style='vnd.ms-excel.numberformat:@'>{$vv}</td>";
+				} else {
+					$htmlStr .= "<td align=center>{$vv}</td>";
+				}
+			}
+			$htmlStr .= '</tr>';
+		}
+		$htmlStr .= '</table>';
+		file_put_contents('./public/uploads/'.$name, $htmlStr);
+	}
+}
