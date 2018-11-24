@@ -1,16 +1,16 @@
 <?php
 namespace app\admin\controller;
-use app\admin\model\Administrator;
-use app\admin\model\Posts;
+use app\admin\model\AdministratorModel;
+use app\admin\model\PostsModel;
 use app\admin\controller\AdminAuth;
 use think\Validate;
-class IndexController extends AdminAuth
+class Index extends AdminAuth
 {
     public function index()
     {
-        $this->data['admin_count'] = Administrator::where('status','=',1)->count();
-        $this->data['post_count_all'] = Posts::where('status','>=',0)->count();
-        $this->data['post_count_latest_month'] = Posts::whereTime('create_time','>=',date('Y-m-01'))->where('status','>=',0)->count();
+        $this->data['admin_count'] = AdministratorModel::where('status','=',1)->count();
+        $this->data['post_count_all'] = PostsModel::where('status','>=',0)->count();
+        $this->data['post_count_latest_month'] = PostsModel::whereTime('create_time','>=',date('Y-m-01'))->where('status','>=',0)->count();
         $this->assign('data',$this->data);
         return $this->fetch();
     }
@@ -23,7 +23,7 @@ class IndexController extends AdminAuth
 
     public function login_action(){
 
-        $user = new Administrator;
+        $user = new AdministratorModel;
         $data = input('post.');
         $rule = [
             //管理员登陆字段验证
@@ -47,7 +47,7 @@ class IndexController extends AdminAuth
                 'password' => (isset($preview['salt']) && $preview['salt']) ? md5($data['admin_password'].$preview['salt']) : md5($data['admin_password']),
                 'status'   => 1
             );
-        if ($user = $user->where($where_query)->find()) {
+        if ($user = $user->info($where_query)) {
             //注册session
             session('uid',$user->id);
             session('admin_username',$user->username);

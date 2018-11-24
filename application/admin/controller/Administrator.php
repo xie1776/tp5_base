@@ -1,11 +1,11 @@
 <?php
 namespace app\admin\controller;
-use app\admin\model\Administrator;
+use app\admin\model\AdministratorModel;
 use app\admin\controller\AdminAuth;
 use think\Validate;
 use think\Image;
 use think\Request;
-class AdministratorController extends AdminAuth
+class Administrator extends AdminAuth
 {
 	//模块基本信息
 	private $data = array(
@@ -23,7 +23,7 @@ class AdministratorController extends AdminAuth
      */
     public function index()
     {
-        $list =  Administrator::where('status','>=','0')->order('id', 'ASC')->paginate();
+        $list =  AdministratorModel::where('status','>=','0')->order('id', 'ASC')->paginate();
 
         $this->assign('data',$this->data);
         $this->assign('list',$list);
@@ -61,7 +61,7 @@ class AdministratorController extends AdminAuth
      */
     public function add()
     {
-        $user = new Administrator;
+        $user = new AdministratorModel;
         $data = input('post.');
 
         $rule = [
@@ -116,7 +116,7 @@ class AdministratorController extends AdminAuth
         );
 
         //默认值设置
-        $item = Administrator::get($id);
+        $item = AdministratorModel::get($id);
 
         $this->assign('item',$item);
         $this->assign('data',$this->data);
@@ -130,7 +130,7 @@ class AdministratorController extends AdminAuth
      */
     public function update($id)
     {
-        $user = new Administrator;
+        $user = new AdministratorModel;
         $data = input('post.');
 
         $preview = $user->where(array('username'=>$data['username']))->find();
@@ -241,7 +241,7 @@ class AdministratorController extends AdminAuth
      */
     public function delete($id)
     {
-        $user = new Administrator;
+        $user = new AdministratorModel;
         $data['id'] = $id;
         $data['status'] = -1;
         if ($user->update($data)) {
@@ -267,7 +267,7 @@ class AdministratorController extends AdminAuth
     }
 
     public function delete_image($id){
-    	$user = Administrator::get($id);
+    	$user = AdministratorModel::get($id);
     	if (file_exists($this->data['upload_path'] .'/'. $user->avatar)) {
             @unlink($this->data['upload_path'] .'/'. $user->avatar);
         }
@@ -290,7 +290,7 @@ class AdministratorController extends AdminAuth
 
     public function update_expire_time($id)
     {
-        $user = Administrator::get($id);
+        $user = AdministratorModel::get($id);
         $data['id'] = $id;
         $user->expire_time = time(); //
         if (false !== $user->save()) {

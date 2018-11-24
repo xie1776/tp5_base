@@ -1,9 +1,8 @@
 <?php
+
 namespace app\admin\model;
 
-use think\Model;
-
-class Administrator extends Model
+class AdministratorModel extends BaseModel
 {
 
     // 设置完整的数据表（包含前缀）

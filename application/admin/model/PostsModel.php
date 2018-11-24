@@ -1,9 +1,8 @@
 <?php
+
 namespace app\admin\model;
 
-use think\Model;
-
-class Posts extends Model
+class PostsModel extends BaseModel
 {
 
     // 设置完整的数据表（包含前缀）

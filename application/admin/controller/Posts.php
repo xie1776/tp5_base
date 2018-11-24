@@ -1,12 +1,12 @@
 <?php
 namespace app\admin\controller;
-use app\admin\model\Administrator;
-use app\admin\model\Posts;
+use app\admin\model\AdministratorModel;
+use app\admin\model\PostsModel;
 use app\admin\controller\AdminAuth;
 use think\Validate;
 use think\Image;
 use think\Request;
-class PostsController extends AdminAuth
+class Posts extends AdminAuth
 {
 	//模块基本信息
 	private $data = array(
@@ -47,7 +47,7 @@ class PostsController extends AdminAuth
         *   在 create/read 页面,select/checkbox/radio字段默认值判断时不对，需要单独设置默认值
         */
         // $list =  Posts::view('posts','*')
-        //                 ->view('administrator',['nickname'],'posts.post_author=administrator.id') //这里本人对关联查询写法不熟，手册中关联查询部分没有完整实例，试了几种方法（join(),model定义关联），最后用view写
+        //                 ->view('administratorModel',['nickname'],'posts.post_author=administratorModel.id') //这里本人对关联查询写法不熟，手册中关联查询部分没有完整实例，试了几种方法（join(),model定义关联），最后用view写
         //                 ->where('posts.status','>=','0')
         //                 ->order('posts.create_time', 'DESC')
         //                 ->paginate();
@@ -79,7 +79,7 @@ class PostsController extends AdminAuth
         }
 
 
-        $list =  Posts::where($map)
+        $list =  PostsModel::where($map)
                         ->order('create_time', 'DESC')
                         ->paginate();
 
@@ -94,7 +94,7 @@ class PostsController extends AdminAuth
      */
     public function create()
     {
-        $admins = Administrator::where('status',1)->column('nickname','id');
+        $admins = AdministratorModel::where('status',1)->column('nickname','id');
 
         $this->data['edit_fields'] = array(
             'post_title'     => array('type' => 'text', 'label' => '标题'),
@@ -168,7 +168,7 @@ class PostsController extends AdminAuth
      */
     public function read($id='')
     {
-        $admins = Administrator::where('status',1)->column('nickname','id');
+        $admins = AdministratorModel::where('status',1)->column('nickname','id');
 
         $this->data['edit_fields'] = array(
             'post_title'     => array('type' => 'text', 'label' => '标题'),
@@ -189,7 +189,7 @@ class PostsController extends AdminAuth
         );
 
         //默认值设置
-        $item = Posts::get($id);
+        $item = PostsModel::get($id);
         $item['post_content'] = str_replace('&', '&amp;', $item['post_content']);
 
         $this->assign('item',$item);
@@ -205,7 +205,7 @@ class PostsController extends AdminAuth
      */
     public function update($id)
     {
-        $posts = new Posts;
+        $posts = new PostsModel;
         $data = input('post.');
 
         $rule = [
@@ -301,7 +301,7 @@ class PostsController extends AdminAuth
      */
     public function delete($id)
     {
-        $posts = new Posts;
+        $posts = new PostsModel;
         $data['id'] = $id;
         $data['status'] = -1;
         if ($posts->update($data)) {
@@ -327,7 +327,7 @@ class PostsController extends AdminAuth
     }
 
     public function delete_image($id){
-    	$posts = Posts::get($id);
+    	$posts = PostsModel::get($id);
     	if (file_exists($this->data['upload_path'] .'/'. $posts->feature_image)) {
             @unlink($this->data['upload_path'] .'/'. $posts->feature_image);
         }
