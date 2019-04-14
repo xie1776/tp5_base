@@ -6,7 +6,7 @@ class PostsModel extends BaseModel
 {
 
     // 设置完整的数据表（包含前缀）
-    protected $table = 'think_posts';
+    protected $table = 'ba_posts';
 
     // 关闭自动写入时间戳
     //protected $autoWriteTimestamp = false;
